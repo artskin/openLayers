@@ -1,4 +1,4 @@
-document.write("<script language=javascript src='jquery.js'></script>");
+
 
 var Map = function(div) {
 	var div = document.getElementById(div);
@@ -7,11 +7,12 @@ var Map = function(div) {
 	this.zoom = 100; //缩放默认为100
 	if(div){
 		this.div = div;
-		this.width = parseInt(div.style.width);
-		this.height = parseInt(div.style.height);
+		// this.width = parseInt(div.style.width);
+		// this.height = parseInt(div.style.height);
 		this.canvas = document.createElement("canvas"); //创建canvas标签
 		this.div.appendChild(this.canvas); //添加canvas标签
-		this.setCanvas(this.canvas); //设置canvas大小
+		this.canvas.width = this.width; //设置canvas大小
+		this.canvas.height = this.height; //设置canvas大小
 		this.context = this.canvas.getContext("2d"); //获取绘图环境
 		this.context.translate(this.width/2,this.height/2);//将中心放到画布中心
 		this.canvas.style.backgroundColor = '#F5F3EF';
@@ -28,6 +29,8 @@ var Map = function(div) {
 };
 
 Map.prototype.showMap = function(map){
+	console.log(map)
+	
 	map.getPosition(function(data){
 		document.getElementById('show_lnglat').innerHTML = '当前经纬度为:' + data.lng + ',' + data.lat;
 	});

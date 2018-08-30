@@ -2,15 +2,33 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title></title>
-		
+		<title>地图</title>
+		<style>
+			#canvas-el{width: 600px;height: 400px;}
+		</style>
 	</head>
 	<body>
-		<script type="text/javascript" src="QMap.js"></script>
-		<script type="text/javascript">
-			Ajax.getJSON('http://123.57.39.116:3000/fujian', function(data){
-				console.log(data);
+		<div id="canvas-el"></div>
+		<div id="show_lnglat">s</div>
+		<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+		<script src="vmap.js"></script>
+		<script src="QMap.js"></script>
+		
+		<script>
+			var data = {map:""}
+			var myMap = new Map("canvas-el")
+			vmap.ajax.getJSON('http://127.0.0.1:5500/vector-map/server/data/fujian.json', function(res){
+				data.map = res;
 			});
+			setTimeout(function(){
+				//console.log(data.map.features[0])
+				myMap.showMap(data.map.features[0])
+			},0)
+			
+			
+			//Map("canvas-el");
+			console.log(myMap)
+			
 		</script>
 	</body>
 </html>

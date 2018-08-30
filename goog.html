@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>地图</title>
+	<style>
+		#canvas-el{width: 600px;height: 400px;}
+	</style>
+</head>
+<body>
+	<div class="container">
+	
+	<!--
+	<button type="button" onclick="c1()">不要按1</button>
+	<button type="button" onclick="c2()">不要按2</button>
+	-->
+	<button type="button" onclick="c3()">确认按钮</button>
+	图片上单击框选-->点击确认-->下面一张图察看效果.
+	</div> 
+	<div style="margin-left: 100px;margin-top: 100px;">
+	<canvas id="tt" width="1210" height="910"  style="background: url(goog2.png) no-repeat center center;"></canvas>
+	<canvas id="show" width="1210" height="910"  style="background: url(goog2.png) no-repeat center center;"></canvas>
+	</div>	
+		
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="goog.js"></script>
+<script>
+	var a = new goog("tt");
+	var b = new goog("show");
+	a.selectListen();
+	function c3() {
+	a.selectDetermine();
+	var dat = a.getSelected();
+	b.addShowListen(dat);
+	}
+</script>
+	
+</body>
+</html>

@@ -1,5 +1,5 @@
 
-(function(global){
+//(function(global){
 	/*
 	 + @class obj: 处理ajax请求
 	 + @method: getJSON从服务器拉取数据
@@ -44,4 +44,4 @@
 		}
 	};
 
-})(window);
+//})(window);

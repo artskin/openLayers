@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <style>
+      .map {
+        width: 800px;
+        height: 600px;
+        border: 1px dashed #ccc;
+      }
+      .selected{border: 1px dashed #fc0}
+    </style>
+    <title>OpenLayers example</title>
+  <!-- <script src="https://cdn.bootcss.com/openlayers/4.6.5/ol.js"></script>
+  <script>
+  
+        //定义全局变量
+        var map, layer, selectControl, selectedFeature;
+        //关闭弹出窗口的函数
+        function onPopupClose(evt) {
+            selectControl.unselect(selectedFeature);
+        }
+        //构造弹出窗口的函数
+        function onFeatureSelect(feature) {
+            selectedFeature = feature;
+            popup = new Popup.Anchored("chicken",
+                                     feature.geometry.getBounds().getCenterLonLat(),
+                                     new Size(250,75),
+                                     "<div style='font-size:.8em'>" + feature.attributes['cq:LNAME'] +"</div>",
+                                     null, true, onPopupClose);
+            feature.popup = popup;
+            map.addPopup(popup);
+        }
+        //销毁弹出窗口的函数
+        function onFeatureUnselect(feature) {
+            map.removePopup(feature.popup);
+            feature.popup.destroy();
+            feature.popup = null;
+        }
+        //地图和页面加载函数
+        window.onload = function(){
+          console.log(ol)
+          map = new ol.Map({
+            target: 'map',
+            maxScale: 500, minScale: 500000, numZoomLevels: 5,
+            layers: [
+              new ol.layer.WMS( "District","http://192.98.151.17:8081/geoserver/wms", {layers: 'cq:GMAP_DISTRICT'} ),
+              new ol.Layer.WMS( "Water","http://192.98.151.17:8081/geoserver/wms", {layers: 'cq:GMAP_LAKE', 'transparent': true, format: 'image/png' } ),
+              new ol.Layer.WFS( "Unit",
+                    "http://192.98.151.17:8081/geoserver/wfs", {typename: 'cq:GPOI_GOV'},
+               { 
+                      typename: 'unit',
+                      featureNS: 'http://www.openplans.org/cq',
+                      extractAttributes: true,
+                      maxfeatures: 10,
+                      textAttrToDisplay: 'lname'
+               } )
+            ],
+            view: new ol.View({
+              center: ol.proj.fromLonLat([37.41, 8.82]),
+              zoom: 4
+            })
+          });
+            //设置地图缩放范围和缩放等级，0级比例尺最小
+            
+            //加载行政区图层，WMS栅格图像
+            
+            //加载水系图层，WMS栅格图像
+            
+            //加载单位图层，WFS矢量数据，由openlayers在客户端绘制，注意：数量太多会导致速度缓慢
+            
+            //在地图上添加按钮和工具条
+            zb = new Control.ZoomBox();
+            var panel = new Control.Panel({defaultControl: zb});
+            selectControl = new Control.SelectFeature(layer, {onSelect: onFeatureSelect, onUnselect: onFeatureUnselect, hover: true});
+            panel.addControls([
+                new Control.MouseDefaults(), zb, selectControl
+            ]);
+            map.addControl(panel);
+          
+            map.addControl(new Control.PanZoomBar({zoomWorldIcon:false}));
+            map.addControl(new Control.LayerSwitcher({'ascending':false}));
+            map.addControl(new Control.MousePosition());
+            //设置初始地图的中心坐标和缩放等级
+            map.setCenter(new LonLat(106.5, 29.5), 3);
+        }
+        </script> -->
+  <link rel="stylesheet" href="/vector-map.c005d75a.css"></head>
+  <body>
+    <h2>My Map</h2>
+    
+    <form class="form-inline">
+      <label>Geometry type &nbsp;</label>
+      <!-- <select id="type">
+        <option value="Polygon">Polygon</option>
+        <option value="Point">Point</option>
+        <option value="LineString">LineString</option>
+        <option value="Circle">Circle</option>
+      </select> -->
+    </form>
+    <div id="panel"></div>
+    <div id="toolbar">
+      <div id="type">
+        <i class="Polygon" id="Polygon">多边形</i>
+        <i class="Point" id="Point">摄像头</i>
+        <i class="Circle" id="Circle">圆形</i>
+      </div>
+    </div>
+  <div id="map" class="map"></div>
+  <textarea style="display:none" id="serialize" cols="96" rows="10"></textarea>
+  
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+  <script src="/vector-map.c005d75a.js"></script>
+  
+  </body>
+</html>
