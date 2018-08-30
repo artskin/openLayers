@@ -1,4 +1,4 @@
-import 'ol/ol.css';
+import './src/lib/ol/ol.css';
 import {Map, View} from 'ol';
 // import TileLayer from 'ol/layer/Tile';
 // import OSM from 'ol/source/OSM';
@@ -49,6 +49,7 @@ var vector = new VectorLayer({
 });
 
 var map = new Map({
+  target: 'map',
   layers: [
     //raster, vector
     new ImageLayer({
@@ -61,7 +62,7 @@ var map = new Map({
     vector
 
   ],
-  target: 'map',
+  
   view: new View({
     projection: projection,
     center: getCenter(extent),
@@ -77,7 +78,8 @@ var draw, snap; // global so we can remove them later
 var typeSelect = document.getElementById('type');
 
 $("#type i").click(function(){
-  $(this).addClass("selected").siblings().removeClass("selected");
+  removeAction()
+  $(this).addClass("selected");
   var typeVal = $(this).attr("id");
   addInteractions(typeVal)
 })
@@ -88,19 +90,23 @@ function addInteractions(typeVal) {
     type: typeVal
   });
   
-  // draw.finishDrawing = function(){
-  //   console.log("finishDrawing:结束")
+  // draw.finishDrawing = function(e){
+  //   console.log("finishDrawing:结束:",e);
+  //   return true;
   // }
+
+  draw.on('drawend', function(e){
+    console.log("完成后",e)
+    removeAction()
+  });
+
   map.addInteraction(draw);
   snap = new Snap({source: source});
   
   map.addInteraction(snap);
  
-  console.log(draw,snap)
+  console.log(draw.getOverlay(),snap)
   console.log(map)
-  console.log(map.layers)
-  console.log(map.interactions)
-  console.log(map.target)
 }
 
 
@@ -108,14 +114,15 @@ function addInteractions(typeVal) {
 function removeAction(){
   map.removeInteraction(draw);
   map.removeInteraction(snap);
+  $("#type i").removeClass("selected");
 }
 
 /**
  * Handle change event.
  */
-typeSelect.onchange = function() {
+// typeSelect.onchange = function() {
   
-  addInteractions();
-};
+//   addInteractions();
+// };
 
 //addInteractions();
