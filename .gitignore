@@ -8,7 +8,10 @@ lib-cov
 *.gz
 .idea
 .cache/
+<<<<<<< HEAD
 
+=======
+>>>>>>> 15f815673592b5737949dd5a6dd9e05d0a12c20e
 pids
 logs
 results

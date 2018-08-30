@@ -164,12 +164,11 @@ function reloadCSS() {
 }
 
 module.exports = reloadCSS;
-},{"./bundle-url":"node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"node_modules/ol/ol.css":[function(require,module,exports) {
+},{"./bundle-url":"node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"src/lib/ol/ol.css":[function(require,module,exports) {
 
-        var reloadCSS = require('_css_loader');
-        module.hot.dispose(reloadCSS);
-        module.hot.accept(reloadCSS);
-      
+var reloadCSS = require('_css_loader');
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
 },{"_css_loader":"node_modules/parcel-bundler/src/builtins/css-loader.js"}],"node_modules/ol/util.js":[function(require,module,exports) {
 'use strict';
 
@@ -65106,7 +65105,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 },{"./style/Atlas.js":"node_modules/ol/style/Atlas.js","./style/AtlasManager.js":"node_modules/ol/style/AtlasManager.js","./style/Circle.js":"node_modules/ol/style/Circle.js","./style/Fill.js":"node_modules/ol/style/Fill.js","./style/Icon.js":"node_modules/ol/style/Icon.js","./style/IconImage.js":"node_modules/ol/style/IconImage.js","./style/Image.js":"node_modules/ol/style/Image.js","./style/RegularShape.js":"node_modules/ol/style/RegularShape.js","./style/Stroke.js":"node_modules/ol/style/Stroke.js","./style/Style.js":"node_modules/ol/style/Style.js","./style/Text.js":"node_modules/ol/style/Text.js"}],"index.js":[function(require,module,exports) {
 'use strict';
 
-require('ol/ol.css');
+require('./src/lib/ol/ol.css');
 
 var _ol = require('ol');
 
@@ -65173,6 +65172,7 @@ var vector = new _layer.Vector({
 });
 
 var map = new _ol.Map({
+  target: 'map',
   layers: [
   //raster, vector
   new _Image2.default({
@@ -65182,7 +65182,7 @@ var map = new _ol.Map({
       imageExtent: extent
     })
   }), vector],
-  target: 'map',
+
   view: new _ol.View({
     projection: projection,
     center: (0, _extent.getCenter)(extent),
@@ -65198,7 +65198,8 @@ var draw, snap; // global so we can remove them later
 var typeSelect = document.getElementById('type');
 
 $("#type i").click(function () {
-  $(this).addClass("selected").siblings().removeClass("selected");
+  removeAction();
+  $(this).addClass("selected");
   var typeVal = $(this).attr("id");
   addInteractions(typeVal);
 });
@@ -65209,36 +65210,41 @@ function addInteractions(typeVal) {
     type: typeVal
   });
 
-  // draw.finishDrawing = function(){
-  //   console.log("finishDrawing:结束")
+  // draw.finishDrawing = function(e){
+  //   console.log("finishDrawing:结束:",e);
+  //   return true;
   // }
+
+  draw.on('drawend', function (e) {
+    console.log("完成后", e);
+    removeAction();
+  });
+
   map.addInteraction(draw);
   snap = new _interaction.Snap({ source: source });
 
   map.addInteraction(snap);
 
-  console.log(draw, snap);
+  console.log(draw.getOverlay(), snap);
   console.log(map);
-  console.log(map.layers);
-  console.log(map.interactions);
-  console.log(map.target);
 }
 
 function removeAction() {
   map.removeInteraction(draw);
   map.removeInteraction(snap);
+  $("#type i").removeClass("selected");
 }
 
 /**
  * Handle change event.
  */
-typeSelect.onchange = function () {
+// typeSelect.onchange = function() {
 
-  addInteractions();
-};
+//   addInteractions();
+// };
 
 //addInteractions();
-},{"ol/ol.css":"node_modules/ol/ol.css","ol":"node_modules/ol/index.js","ol/extent.js":"node_modules/ol/extent.js","ol/layer/Image.js":"node_modules/ol/layer/Image.js","ol/proj/Projection.js":"node_modules/ol/proj/Projection.js","ol/source/ImageStatic.js":"node_modules/ol/source/ImageStatic.js","ol/interaction.js":"node_modules/ol/interaction.js","ol/layer.js":"node_modules/ol/layer.js","ol/source.js":"node_modules/ol/source.js","ol/style.js":"node_modules/ol/style.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./src/lib/ol/ol.css":"src/lib/ol/ol.css","ol":"node_modules/ol/index.js","ol/extent.js":"node_modules/ol/extent.js","ol/layer/Image.js":"node_modules/ol/layer/Image.js","ol/proj/Projection.js":"node_modules/ol/proj/Projection.js","ol/source/ImageStatic.js":"node_modules/ol/source/ImageStatic.js","ol/interaction.js":"node_modules/ol/interaction.js","ol/layer.js":"node_modules/ol/layer.js","ol/source.js":"node_modules/ol/source.js","ol/style.js":"node_modules/ol/style.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 
