@@ -66553,17 +66553,12 @@ var vector = new _layer.Vector({
     })
   })
 });
-console.log(store.get("Point"));
-var pointFeature = new _Feature2.default(new _geom.Point(store.get("Point")));
-var polygonFeature = new _Feature2.default(new _geom.Polygon(store.get("Polygon")));
+// console.log(store.get("Point"))
+// var pointFeature = new Feature(new Point(store.get("Point")));
+// var polygonFeature = new Feature(new Polygon(store.get("Polygon")));
 
-var localVector = new _layer.Vector({
-  source: new _source.Vector({
-    url: "geoJson.json",
-    format: new _GeoJSON2.default(),
-    wrapX: false
-  })
-});
+var localVector = "";
+var pointFeature = new _Feature2.default(new _geom.Point([500, 550]));
 
 var map = new _ol.Map({
   target: 'map',
@@ -66577,10 +66572,23 @@ var map = new _ol.Map({
       imageExtent: extent
     })
   }), new _layer.Vector({
+    // source: new VectorSource({
+    //   features: [pointFeature]
+    // }),
     source: new _source.Vector({
-      features: [pointFeature, polygonFeature]
+      url: "geoJson.json",
+      format: new _GeoJSON2.default(),
+      wrapX: false
     }),
     style: new _style.Style({
+      image: new _style.Icon( /** @type {module:ol/style/Icon~Options} */{
+        anchor: [0.5, 100],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'pixels',
+        opacity: 0.75,
+        scale: 0.3,
+        src: './img/camera@2x.png'
+      }),
       stroke: new _style.Stroke({
         width: 1,
         color: [255, 0, 0, 1]
@@ -66589,7 +66597,7 @@ var map = new _ol.Map({
         color: [0, 0, 255, 0.3]
       })
     })
-  }), localVector, vector],
+  }), vector],
 
   view: new _ol.View({
     projection: projection,
@@ -66686,7 +66694,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '61687' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '56480' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

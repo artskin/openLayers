@@ -5,7 +5,7 @@
 		"type": "Feature",
 		"geometry": {
 			"type": "Point",
-			"coordinates": [102.0, 0.5]
+			"coordinates": [102.0, 100.5]
 		},
 		"properties": {
 			"prop0": "value0"
@@ -15,7 +15,7 @@
 		"type": "Feature",
 		"geometry": {
 			"type": "LineString",
-			"coordinates": [[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]]
+			"coordinates": [[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 0.0]]
 		},
 		"properties": {
 			"prop0": "value0",

@@ -11,7 +11,7 @@ import Static from 'ol/source/ImageStatic.js';
 import {defaults as defaultInteractions,Translate,Draw, Modify, Snap} from 'ol/interaction.js';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
 import {OSM, Vector as VectorSource} from 'ol/source.js';
-import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style.js';
+import {Circle as CircleStyle, Fill,Icon, Stroke, Style} from 'ol/style.js';
 
 
 import {click, pointerMove, altKeyOnly} from 'ol/events/condition.js';
@@ -57,17 +57,12 @@ var vector = new VectorLayer({
     })
   })
 });
-console.log(store.get("Point"))
-var pointFeature = new Feature(new Point(store.get("Point")));
-var polygonFeature = new Feature(new Polygon(store.get("Polygon")));
+// console.log(store.get("Point"))
+// var pointFeature = new Feature(new Point(store.get("Point")));
+// var polygonFeature = new Feature(new Polygon(store.get("Polygon")));
 
-var localVector = new VectorLayer({
-  source:new VectorSource({
-    url:"geoJson.json",
-    format: new GeoJSON(),
-    wrapX: false
-  })
-})
+var localVector = ""
+var pointFeature = new Feature(new Point([500, 550]));
 
 var map = new Map({
   target: 'map',
@@ -82,10 +77,23 @@ var map = new Map({
       })
     }),
     new VectorLayer({
-      source: new VectorSource({
-        features: [pointFeature,polygonFeature]
+      // source: new VectorSource({
+      //   features: [pointFeature]
+      // }),
+      source:new VectorSource({
+        url:"geoJson.json",
+        format: new GeoJSON(),
+        wrapX: false
       }),
       style: new Style({
+        image: new Icon(/** @type {module:ol/style/Icon~Options} */ ({
+          anchor: [0.5, 100],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          opacity: 0.75,
+          scale:0.3,
+          src: './img/camera@2x.png',
+        })),
         stroke: new Stroke({
           width: 1,
           color: [255, 0, 0, 1]
@@ -95,7 +103,6 @@ var map = new Map({
         })
       })
     }),
-    localVector,
     vector
 
   ],
