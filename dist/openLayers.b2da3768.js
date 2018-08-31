@@ -65101,7 +65101,1373 @@ Object.defineProperty(exports, 'Text', {
 });
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./style/Atlas.js":"node_modules/ol/style/Atlas.js","./style/AtlasManager.js":"node_modules/ol/style/AtlasManager.js","./style/Circle.js":"node_modules/ol/style/Circle.js","./style/Fill.js":"node_modules/ol/style/Fill.js","./style/Icon.js":"node_modules/ol/style/Icon.js","./style/IconImage.js":"node_modules/ol/style/IconImage.js","./style/Image.js":"node_modules/ol/style/Image.js","./style/RegularShape.js":"node_modules/ol/style/RegularShape.js","./style/Stroke.js":"node_modules/ol/style/Stroke.js","./style/Style.js":"node_modules/ol/style/Style.js","./style/Text.js":"node_modules/ol/style/Text.js"}],"index.js":[function(require,module,exports) {
+},{"./style/Atlas.js":"node_modules/ol/style/Atlas.js","./style/AtlasManager.js":"node_modules/ol/style/AtlasManager.js","./style/Circle.js":"node_modules/ol/style/Circle.js","./style/Fill.js":"node_modules/ol/style/Fill.js","./style/Icon.js":"node_modules/ol/style/Icon.js","./style/IconImage.js":"node_modules/ol/style/IconImage.js","./style/Image.js":"node_modules/ol/style/Image.js","./style/RegularShape.js":"node_modules/ol/style/RegularShape.js","./style/Stroke.js":"node_modules/ol/style/Stroke.js","./style/Style.js":"node_modules/ol/style/Style.js","./style/Text.js":"node_modules/ol/style/Text.js"}],"node_modules/ol/geom.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _Circle = require('./geom/Circle.js');
+
+Object.defineProperty(exports, 'Circle', {
+  enumerable: true,
+  get: function () {
+    return _interopRequireDefault(_Circle).default;
+  }
+});
+
+var _Geometry = require('./geom/Geometry.js');
+
+Object.defineProperty(exports, 'Geometry', {
+  enumerable: true,
+  get: function () {
+    return _interopRequireDefault(_Geometry).default;
+  }
+});
+
+var _LineString = require('./geom/LineString.js');
+
+Object.defineProperty(exports, 'LineString', {
+  enumerable: true,
+  get: function () {
+    return _interopRequireDefault(_LineString).default;
+  }
+});
+
+var _MultiLineString = require('./geom/MultiLineString.js');
+
+Object.defineProperty(exports, 'MultiLineString', {
+  enumerable: true,
+  get: function () {
+    return _interopRequireDefault(_MultiLineString).default;
+  }
+});
+
+var _MultiPoint = require('./geom/MultiPoint.js');
+
+Object.defineProperty(exports, 'MultiPoint', {
+  enumerable: true,
+  get: function () {
+    return _interopRequireDefault(_MultiPoint).default;
+  }
+});
+
+var _MultiPolygon = require('./geom/MultiPolygon.js');
+
+Object.defineProperty(exports, 'MultiPolygon', {
+  enumerable: true,
+  get: function () {
+    return _interopRequireDefault(_MultiPolygon).default;
+  }
+});
+
+var _Point = require('./geom/Point.js');
+
+Object.defineProperty(exports, 'Point', {
+  enumerable: true,
+  get: function () {
+    return _interopRequireDefault(_Point).default;
+  }
+});
+
+var _Polygon = require('./geom/Polygon.js');
+
+Object.defineProperty(exports, 'Polygon', {
+  enumerable: true,
+  get: function () {
+    return _interopRequireDefault(_Polygon).default;
+  }
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./geom/Circle.js":"node_modules/ol/geom/Circle.js","./geom/Geometry.js":"node_modules/ol/geom/Geometry.js","./geom/LineString.js":"node_modules/ol/geom/LineString.js","./geom/MultiLineString.js":"node_modules/ol/geom/MultiLineString.js","./geom/MultiPoint.js":"node_modules/ol/geom/MultiPoint.js","./geom/MultiPolygon.js":"node_modules/ol/geom/MultiPolygon.js","./geom/Point.js":"node_modules/ol/geom/Point.js","./geom/Polygon.js":"node_modules/ol/geom/Polygon.js"}],"node_modules/ol/format/Feature.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.transformWithOptions = transformWithOptions;
+
+var _Geometry = require('../geom/Geometry.js');
+
+var _Geometry2 = _interopRequireDefault(_Geometry);
+
+var _obj = require('../obj.js');
+
+var _proj = require('../proj.js');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @typedef {Object} ReadOptions
+ * @property {module:ol/proj~ProjectionLike} [dataProjection] Projection of the data we are reading.
+ * If not provided, the projection will be derived from the data (where possible) or
+ * the `dataProjection` of the format is assigned (where set). If the projection
+ * can not be derived from the data and if no `dataProjection` is set for a format,
+ * the features will not be reprojected.
+ * @property {module:ol/extent~Extent} [extent] Tile extent of the tile being read. This is only used and
+ * required for {@link module:ol/format/MVT}.
+ * @property {module:ol/proj~ProjectionLike} [featureProjection] Projection of the feature geometries
+ * created by the format reader. If not provided, features will be returned in the
+ * `dataProjection`.
+ */
+
+/**
+ * @typedef {Object} WriteOptions
+ * @property {module:ol/proj~ProjectionLike} [dataProjection] Projection of the data we are writing.
+ * If not provided, the `dataProjection` of the format is assigned (where set).
+ * If no `dataProjection` is set for a format, the features will be returned
+ * in the `featureProjection`.
+ * @property {module:ol/proj~ProjectionLike} [featureProjection] Projection of the feature geometries
+ * that will be serialized by the format writer. If not provided, geometries are assumed
+ * to be in the `dataProjection` if that is set; in other words, they are not transformed.
+ * @property {boolean} [rightHanded] When writing geometries, follow the right-hand
+ * rule for linear ring orientation.  This means that polygons will have counter-clockwise
+ * exterior rings and clockwise interior rings.  By default, coordinates are serialized
+ * as they are provided at construction.  If `true`, the right-hand rule will
+ * be applied.  If `false`, the left-hand rule will be applied (clockwise for
+ * exterior and counter-clockwise for interior rings).  Note that not all
+ * formats support this.  The GeoJSON format does use this property when writing
+ * geometries.
+ * @property {number} [decimals] Maximum number of decimal places for coordinates.
+ * Coordinates are stored internally as floats, but floating-point arithmetic can create
+ * coordinates with a large number of decimal places, not generally wanted on output.
+ * Set a number here to round coordinates. Can also be used to ensure that
+ * coordinates read in can be written back out with the same number of decimals.
+ * Default is no rounding.
+ */
+
+/**
+ * @classdesc
+ * Abstract base class; normally only used for creating subclasses and not
+ * instantiated in apps.
+ * Base class for feature formats.
+ * {module:ol/format/Feature~FeatureFormat} subclasses provide the ability to decode and encode
+ * {@link module:ol/Feature~Feature} objects from a variety of commonly used geospatial
+ * file formats.  See the documentation for each format for more details.
+ *
+ * @abstract
+ * @api
+ */
+var FeatureFormat = function FeatureFormat() {
+
+  /**
+   * @protected
+   * @type {module:ol/proj/Projection}
+   */
+  this.dataProjection = null;
+
+  /**
+   * @protected
+   * @type {module:ol/proj/Projection}
+   */
+  this.defaultFeatureProjection = null;
+};
+
+/**
+ * Adds the data projection to the read options.
+ * @param {Document|Node|Object|string} source Source.
+ * @param {module:ol/format/Feature~ReadOptions=} opt_options Options.
+ * @return {module:ol/format/Feature~ReadOptions|undefined} Options.
+ * @protected
+ */
+/**
+ * @module ol/format/Feature
+ */
+FeatureFormat.prototype.getReadOptions = function getReadOptions(source, opt_options) {
+  var options;
+  if (opt_options) {
+    options = {
+      dataProjection: opt_options.dataProjection ? opt_options.dataProjection : this.readProjection(source),
+      featureProjection: opt_options.featureProjection
+    };
+  }
+  return this.adaptOptions(options);
+};
+
+/**
+ * Sets the `dataProjection` on the options, if no `dataProjection`
+ * is set.
+ * @param {module:ol/format/Feature~WriteOptions|module:ol/format/Feature~ReadOptions|undefined} options
+ *   Options.
+ * @protected
+ * @return {module:ol/format/Feature~WriteOptions|module:ol/format/Feature~ReadOptions|undefined}
+ *   Updated options.
+ */
+FeatureFormat.prototype.adaptOptions = function adaptOptions(options) {
+  return (0, _obj.assign)({
+    dataProjection: this.dataProjection,
+    featureProjection: this.defaultFeatureProjection
+  }, options);
+};
+
+/**
+ * Get the extent from the source of the last {@link readFeatures} call.
+ * @return {module:ol/extent~Extent} Tile extent.
+ */
+FeatureFormat.prototype.getLastExtent = function getLastExtent() {
+  return null;
+};
+
+/**
+ * @abstract
+ * @return {module:ol/format/FormatType} Format.
+ */
+FeatureFormat.prototype.getType = function getType() {};
+
+/**
+ * Read a single feature from a source.
+ *
+ * @abstract
+ * @param {Document|Node|Object|string} source Source.
+ * @param {module:ol/format/Feature~ReadOptions=} opt_options Read options.
+ * @return {module:ol/Feature} Feature.
+ */
+FeatureFormat.prototype.readFeature = function readFeature(source, opt_options) {};
+
+/**
+ * Read all features from a source.
+ *
+ * @abstract
+ * @param {Document|Node|ArrayBuffer|Object|string} source Source.
+ * @param {module:ol/format/Feature~ReadOptions=} opt_options Read options.
+ * @return {Array<module:ol/Feature>} Features.
+ */
+FeatureFormat.prototype.readFeatures = function readFeatures(source, opt_options) {};
+
+/**
+ * Read a single geometry from a source.
+ *
+ * @abstract
+ * @param {Document|Node|Object|string} source Source.
+ * @param {module:ol/format/Feature~ReadOptions=} opt_options Read options.
+ * @return {module:ol/geom/Geometry} Geometry.
+ */
+FeatureFormat.prototype.readGeometry = function readGeometry(source, opt_options) {};
+
+/**
+ * Read the projection from a source.
+ *
+ * @abstract
+ * @param {Document|Node|Object|string} source Source.
+ * @return {module:ol/proj/Projection} Projection.
+ */
+FeatureFormat.prototype.readProjection = function readProjection(source) {};
+
+/**
+ * Encode a feature in this format.
+ *
+ * @abstract
+ * @param {module:ol/Feature} feature Feature.
+ * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+ * @return {string} Result.
+ */
+FeatureFormat.prototype.writeFeature = function writeFeature(feature, opt_options) {};
+
+/**
+ * Encode an array of features in this format.
+ *
+ * @abstract
+ * @param {Array<module:ol/Feature>} features Features.
+ * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+ * @return {string} Result.
+ */
+FeatureFormat.prototype.writeFeatures = function writeFeatures(features, opt_options) {};
+
+/**
+ * Write a single geometry in this format.
+ *
+ * @abstract
+ * @param {module:ol/geom/Geometry} geometry Geometry.
+ * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+ * @return {string} Result.
+ */
+FeatureFormat.prototype.writeGeometry = function writeGeometry(geometry, opt_options) {};
+
+exports.default = FeatureFormat;
+
+/**
+ * @param {module:ol/geom/Geometry|module:ol/extent~Extent} geometry Geometry.
+ * @param {boolean} write Set to true for writing, false for reading.
+ * @param {module:ol/format/Feature~WriteOptions|module:ol/format/Feature~ReadOptions|undefined} opt_options
+ *     Options.
+ * @return {module:ol/geom/Geometry|module:ol/extent~Extent} Transformed geometry.
+ */
+
+function transformWithOptions(geometry, write, opt_options) {
+  var featureProjection = opt_options ? (0, _proj.get)(opt_options.featureProjection) : null;
+  var dataProjection = opt_options ? (0, _proj.get)(opt_options.dataProjection) : null;
+  /**
+   * @type {module:ol/geom/Geometry|module:ol/extent~Extent}
+   */
+  var transformed;
+  if (featureProjection && dataProjection && !(0, _proj.equivalent)(featureProjection, dataProjection)) {
+    if (geometry instanceof _Geometry2.default) {
+      transformed = (write ? geometry.clone() : geometry).transform(write ? featureProjection : dataProjection, write ? dataProjection : featureProjection);
+    } else {
+      // FIXME this is necessary because GML treats extents
+      // as geometries
+      transformed = (0, _proj.transformExtent)(geometry, dataProjection, featureProjection);
+    }
+  } else {
+    transformed = geometry;
+  }
+  if (write && opt_options && opt_options.decimals !== undefined) {
+    var power = Math.pow(10, opt_options.decimals);
+    // if decimals option on write, round each coordinate appropriately
+    /**
+     * @param {Array<number>} coordinates Coordinates.
+     * @return {Array<number>} Transformed coordinates.
+     */
+    var transform = function (coordinates) {
+      for (var i = 0, ii = coordinates.length; i < ii; ++i) {
+        coordinates[i] = Math.round(coordinates[i] * power) / power;
+      }
+      return coordinates;
+    };
+    if (transformed === geometry) {
+      transformed = transformed.clone();
+    }
+    transformed.applyTransform(transform);
+  }
+  return transformed;
+}
+
+//# sourceMappingURL=Feature.js.map
+},{"../geom/Geometry.js":"node_modules/ol/geom/Geometry.js","../obj.js":"node_modules/ol/obj.js","../proj.js":"node_modules/ol/proj.js"}],"node_modules/ol/format/JSONFeature.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _Feature = require('../format/Feature.js');
+
+var _Feature2 = _interopRequireDefault(_Feature);
+
+var _FormatType = require('../format/FormatType.js');
+
+var _FormatType2 = _interopRequireDefault(_FormatType);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @classdesc
+ * Abstract base class; normally only used for creating subclasses and not
+ * instantiated in apps.
+ * Base class for JSON feature formats.
+ *
+ * @abstract
+ */
+/**
+ * @module ol/format/JSONFeature
+ */
+var JSONFeature = function (FeatureFormat) {
+  function JSONFeature() {
+    FeatureFormat.call(this);
+  }
+
+  if (FeatureFormat) JSONFeature.__proto__ = FeatureFormat;
+  JSONFeature.prototype = Object.create(FeatureFormat && FeatureFormat.prototype);
+  JSONFeature.prototype.constructor = JSONFeature;
+
+  /**
+   * @inheritDoc
+   */
+  JSONFeature.prototype.getType = function getType() {
+    return _FormatType2.default.JSON;
+  };
+
+  /**
+   * Read a feature.  Only works for a single feature. Use `readFeatures` to
+   * read a feature collection.
+   *
+   * @param {ArrayBuffer|Document|Node|Object|string} source Source.
+   * @param {module:ol/format/Feature~ReadOptions=} opt_options Read options.
+   * @return {module:ol/Feature} Feature.
+   * @api
+   */
+  JSONFeature.prototype.readFeature = function readFeature(source, opt_options) {
+    return this.readFeatureFromObject(getObject(source), this.getReadOptions(source, opt_options));
+  };
+
+  /**
+   * Read all features.  Works with both a single feature and a feature
+   * collection.
+   *
+   * @param {ArrayBuffer|Document|Node|Object|string} source Source.
+   * @param {module:ol/format/Feature~ReadOptions=} opt_options Read options.
+   * @return {Array<module:ol/Feature>} Features.
+   * @api
+   */
+  JSONFeature.prototype.readFeatures = function readFeatures(source, opt_options) {
+    return this.readFeaturesFromObject(getObject(source), this.getReadOptions(source, opt_options));
+  };
+
+  /**
+   * @abstract
+   * @param {Object} object Object.
+   * @param {module:ol/format/Feature~ReadOptions=} opt_options Read options.
+   * @protected
+   * @return {module:ol/Feature} Feature.
+   */
+  JSONFeature.prototype.readFeatureFromObject = function readFeatureFromObject(object, opt_options) {};
+
+  /**
+   * @abstract
+   * @param {Object} object Object.
+   * @param {module:ol/format/Feature~ReadOptions=} opt_options Read options.
+   * @protected
+   * @return {Array<module:ol/Feature>} Features.
+   */
+  JSONFeature.prototype.readFeaturesFromObject = function readFeaturesFromObject(object, opt_options) {};
+
+  /**
+   * Read a geometry.
+   *
+   * @param {ArrayBuffer|Document|Node|Object|string} source Source.
+   * @param {module:ol/format/Feature~ReadOptions=} opt_options Read options.
+   * @return {module:ol/geom/Geometry} Geometry.
+   * @api
+   */
+  JSONFeature.prototype.readGeometry = function readGeometry(source, opt_options) {
+    return this.readGeometryFromObject(getObject(source), this.getReadOptions(source, opt_options));
+  };
+
+  /**
+   * @abstract
+   * @param {Object} object Object.
+   * @param {module:ol/format/Feature~ReadOptions=} opt_options Read options.
+   * @protected
+   * @return {module:ol/geom/Geometry} Geometry.
+   */
+  JSONFeature.prototype.readGeometryFromObject = function readGeometryFromObject(object, opt_options) {};
+
+  /**
+   * Read the projection.
+   *
+   * @param {ArrayBuffer|Document|Node|Object|string} source Source.
+   * @return {module:ol/proj/Projection} Projection.
+   * @api
+   */
+  JSONFeature.prototype.readProjection = function readProjection(source) {
+    return this.readProjectionFromObject(getObject(source));
+  };
+
+  /**
+   * @abstract
+   * @param {Object} object Object.
+   * @protected
+   * @return {module:ol/proj/Projection} Projection.
+   */
+  JSONFeature.prototype.readProjectionFromObject = function readProjectionFromObject(object) {};
+
+  /**
+   * Encode a feature as string.
+   *
+   * @param {module:ol/Feature} feature Feature.
+   * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+   * @return {string} Encoded feature.
+   * @api
+   */
+  JSONFeature.prototype.writeFeature = function writeFeature(feature, opt_options) {
+    return JSON.stringify(this.writeFeatureObject(feature, opt_options));
+  };
+
+  /**
+   * @abstract
+   * @param {module:ol/Feature} feature Feature.
+   * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+   * @return {Object} Object.
+   */
+  JSONFeature.prototype.writeFeatureObject = function writeFeatureObject(feature, opt_options) {};
+
+  /**
+   * Encode an array of features as string.
+   *
+   * @param {Array<module:ol/Feature>} features Features.
+   * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+   * @return {string} Encoded features.
+   * @api
+   */
+  JSONFeature.prototype.writeFeatures = function writeFeatures(features, opt_options) {
+    return JSON.stringify(this.writeFeaturesObject(features, opt_options));
+  };
+
+  /**
+   * @abstract
+   * @param {Array<module:ol/Feature>} features Features.
+   * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+   * @return {Object} Object.
+   */
+  JSONFeature.prototype.writeFeaturesObject = function writeFeaturesObject(features, opt_options) {};
+
+  /**
+   * Encode a geometry as string.
+   *
+   * @param {module:ol/geom/Geometry} geometry Geometry.
+   * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+   * @return {string} Encoded geometry.
+   * @api
+   */
+  JSONFeature.prototype.writeGeometry = function writeGeometry(geometry, opt_options) {
+    return JSON.stringify(this.writeGeometryObject(geometry, opt_options));
+  };
+
+  /**
+   * @abstract
+   * @param {module:ol/geom/Geometry} geometry Geometry.
+   * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+   * @return {Object} Object.
+   */
+  JSONFeature.prototype.writeGeometryObject = function writeGeometryObject(geometry, opt_options) {};
+
+  return JSONFeature;
+}(_Feature2.default);
+
+/**
+ * @param {Document|Node|Object|string} source Source.
+ * @return {Object} Object.
+ */
+function getObject(source) {
+  if (typeof source === 'string') {
+    var object = JSON.parse(source);
+    return object ? /** @type {Object} */object : null;
+  } else if (source !== null) {
+    return source;
+  } else {
+    return null;
+  }
+}
+
+exports.default = JSONFeature;
+
+//# sourceMappingURL=JSONFeature.js.map
+},{"../format/Feature.js":"node_modules/ol/format/Feature.js","../format/FormatType.js":"node_modules/ol/format/FormatType.js"}],"node_modules/ol/geom/GeometryCollection.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _events = require('../events.js');
+
+var _EventType = require('../events/EventType.js');
+
+var _EventType2 = _interopRequireDefault(_EventType);
+
+var _extent = require('../extent.js');
+
+var _Geometry = require('../geom/Geometry.js');
+
+var _Geometry2 = _interopRequireDefault(_Geometry);
+
+var _GeometryType = require('../geom/GeometryType.js');
+
+var _GeometryType2 = _interopRequireDefault(_GeometryType);
+
+var _obj = require('../obj.js');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @classdesc
+ * An array of {@link module:ol/geom/Geometry} objects.
+ *
+ * @api
+ */
+/**
+ * @module ol/geom/GeometryCollection
+ */
+var GeometryCollection = function (Geometry) {
+  function GeometryCollection(opt_geometries) {
+
+    Geometry.call(this);
+
+    /**
+     * @private
+     * @type {Array<module:ol/geom/Geometry>}
+     */
+    this.geometries_ = opt_geometries ? opt_geometries : null;
+
+    this.listenGeometriesChange_();
+  }
+
+  if (Geometry) GeometryCollection.__proto__ = Geometry;
+  GeometryCollection.prototype = Object.create(Geometry && Geometry.prototype);
+  GeometryCollection.prototype.constructor = GeometryCollection;
+
+  /**
+   * @private
+   */
+  GeometryCollection.prototype.unlistenGeometriesChange_ = function unlistenGeometriesChange_() {
+    var this$1 = this;
+
+    if (!this.geometries_) {
+      return;
+    }
+    for (var i = 0, ii = this.geometries_.length; i < ii; ++i) {
+      (0, _events.unlisten)(this$1.geometries_[i], _EventType2.default.CHANGE, this$1.changed, this$1);
+    }
+  };
+
+  /**
+   * @private
+   */
+  GeometryCollection.prototype.listenGeometriesChange_ = function listenGeometriesChange_() {
+    var this$1 = this;
+
+    if (!this.geometries_) {
+      return;
+    }
+    for (var i = 0, ii = this.geometries_.length; i < ii; ++i) {
+      (0, _events.listen)(this$1.geometries_[i], _EventType2.default.CHANGE, this$1.changed, this$1);
+    }
+  };
+
+  /**
+   * Make a complete copy of the geometry.
+   * @return {!module:ol/geom/GeometryCollection} Clone.
+   * @override
+   * @api
+   */
+  GeometryCollection.prototype.clone = function clone() {
+    var geometryCollection = new GeometryCollection(null);
+    geometryCollection.setGeometries(this.geometries_);
+    return geometryCollection;
+  };
+
+  /**
+   * @inheritDoc
+   */
+  GeometryCollection.prototype.closestPointXY = function closestPointXY(x, y, closestPoint, minSquaredDistance) {
+    if (minSquaredDistance < (0, _extent.closestSquaredDistanceXY)(this.getExtent(), x, y)) {
+      return minSquaredDistance;
+    }
+    var geometries = this.geometries_;
+    for (var i = 0, ii = geometries.length; i < ii; ++i) {
+      minSquaredDistance = geometries[i].closestPointXY(x, y, closestPoint, minSquaredDistance);
+    }
+    return minSquaredDistance;
+  };
+
+  /**
+   * @inheritDoc
+   */
+  GeometryCollection.prototype.containsXY = function containsXY(x, y) {
+    var geometries = this.geometries_;
+    for (var i = 0, ii = geometries.length; i < ii; ++i) {
+      if (geometries[i].containsXY(x, y)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /**
+   * @inheritDoc
+   */
+  GeometryCollection.prototype.computeExtent = function computeExtent(extent) {
+    (0, _extent.createOrUpdateEmpty)(extent);
+    var geometries = this.geometries_;
+    for (var i = 0, ii = geometries.length; i < ii; ++i) {
+      (0, _extent.extend)(extent, geometries[i].getExtent());
+    }
+    return extent;
+  };
+
+  /**
+   * Return the geometries that make up this geometry collection.
+   * @return {Array<module:ol/geom/Geometry>} Geometries.
+   * @api
+   */
+  GeometryCollection.prototype.getGeometries = function getGeometries() {
+    return cloneGeometries(this.geometries_);
+  };
+
+  /**
+   * @return {Array<module:ol/geom/Geometry>} Geometries.
+   */
+  GeometryCollection.prototype.getGeometriesArray = function getGeometriesArray() {
+    return this.geometries_;
+  };
+
+  /**
+   * @inheritDoc
+   */
+  GeometryCollection.prototype.getSimplifiedGeometry = function getSimplifiedGeometry(squaredTolerance) {
+    if (this.simplifiedGeometryRevision != this.getRevision()) {
+      (0, _obj.clear)(this.simplifiedGeometryCache);
+      this.simplifiedGeometryMaxMinSquaredTolerance = 0;
+      this.simplifiedGeometryRevision = this.getRevision();
+    }
+    if (squaredTolerance < 0 || this.simplifiedGeometryMaxMinSquaredTolerance !== 0 && squaredTolerance < this.simplifiedGeometryMaxMinSquaredTolerance) {
+      return this;
+    }
+    var key = squaredTolerance.toString();
+    if (this.simplifiedGeometryCache.hasOwnProperty(key)) {
+      return this.simplifiedGeometryCache[key];
+    } else {
+      var simplifiedGeometries = [];
+      var geometries = this.geometries_;
+      var simplified = false;
+      for (var i = 0, ii = geometries.length; i < ii; ++i) {
+        var geometry = geometries[i];
+        var simplifiedGeometry = geometry.getSimplifiedGeometry(squaredTolerance);
+        simplifiedGeometries.push(simplifiedGeometry);
+        if (simplifiedGeometry !== geometry) {
+          simplified = true;
+        }
+      }
+      if (simplified) {
+        var simplifiedGeometryCollection = new GeometryCollection(null);
+        simplifiedGeometryCollection.setGeometriesArray(simplifiedGeometries);
+        this.simplifiedGeometryCache[key] = simplifiedGeometryCollection;
+        return simplifiedGeometryCollection;
+      } else {
+        this.simplifiedGeometryMaxMinSquaredTolerance = squaredTolerance;
+        return this;
+      }
+    }
+  };
+
+  /**
+   * @inheritDoc
+   * @api
+   */
+  GeometryCollection.prototype.getType = function getType() {
+    return _GeometryType2.default.GEOMETRY_COLLECTION;
+  };
+
+  /**
+   * @inheritDoc
+   * @api
+   */
+  GeometryCollection.prototype.intersectsExtent = function intersectsExtent(extent) {
+    var geometries = this.geometries_;
+    for (var i = 0, ii = geometries.length; i < ii; ++i) {
+      if (geometries[i].intersectsExtent(extent)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /**
+   * @return {boolean} Is empty.
+   */
+  GeometryCollection.prototype.isEmpty = function isEmpty() {
+    return this.geometries_.length === 0;
+  };
+
+  /**
+   * @inheritDoc
+   * @api
+   */
+  GeometryCollection.prototype.rotate = function rotate(angle, anchor) {
+    var geometries = this.geometries_;
+    for (var i = 0, ii = geometries.length; i < ii; ++i) {
+      geometries[i].rotate(angle, anchor);
+    }
+    this.changed();
+  };
+
+  /**
+   * @inheritDoc
+   * @api
+   */
+  GeometryCollection.prototype.scale = function scale(sx, opt_sy, opt_anchor) {
+    var anchor = opt_anchor;
+    if (!anchor) {
+      anchor = (0, _extent.getCenter)(this.getExtent());
+    }
+    var geometries = this.geometries_;
+    for (var i = 0, ii = geometries.length; i < ii; ++i) {
+      geometries[i].scale(sx, opt_sy, anchor);
+    }
+    this.changed();
+  };
+
+  /**
+   * Set the geometries that make up this geometry collection.
+   * @param {Array<module:ol/geom/Geometry>} geometries Geometries.
+   * @api
+   */
+  GeometryCollection.prototype.setGeometries = function setGeometries(geometries) {
+    this.setGeometriesArray(cloneGeometries(geometries));
+  };
+
+  /**
+   * @param {Array<module:ol/geom/Geometry>} geometries Geometries.
+   */
+  GeometryCollection.prototype.setGeometriesArray = function setGeometriesArray(geometries) {
+    this.unlistenGeometriesChange_();
+    this.geometries_ = geometries;
+    this.listenGeometriesChange_();
+    this.changed();
+  };
+
+  /**
+   * @inheritDoc
+   * @api
+   */
+  GeometryCollection.prototype.applyTransform = function applyTransform(transformFn) {
+    var geometries = this.geometries_;
+    for (var i = 0, ii = geometries.length; i < ii; ++i) {
+      geometries[i].applyTransform(transformFn);
+    }
+    this.changed();
+  };
+
+  /**
+   * @inheritDoc
+   * @api
+   */
+  GeometryCollection.prototype.translate = function translate(deltaX, deltaY) {
+    var geometries = this.geometries_;
+    for (var i = 0, ii = geometries.length; i < ii; ++i) {
+      geometries[i].translate(deltaX, deltaY);
+    }
+    this.changed();
+  };
+
+  /**
+   * @inheritDoc
+   */
+  GeometryCollection.prototype.disposeInternal = function disposeInternal() {
+    this.unlistenGeometriesChange_();
+    Geometry.prototype.disposeInternal.call(this);
+  };
+
+  return GeometryCollection;
+}(_Geometry2.default);
+
+/**
+ * @param {Array<module:ol/geom/Geometry>} geometries Geometries.
+ * @return {Array<module:ol/geom/Geometry>} Cloned geometries.
+ */
+function cloneGeometries(geometries) {
+  var clonedGeometries = [];
+  for (var i = 0, ii = geometries.length; i < ii; ++i) {
+    clonedGeometries.push(geometries[i].clone());
+  }
+  return clonedGeometries;
+}
+
+exports.default = GeometryCollection;
+
+//# sourceMappingURL=GeometryCollection.js.map
+},{"../events.js":"node_modules/ol/events.js","../events/EventType.js":"node_modules/ol/events/EventType.js","../extent.js":"node_modules/ol/extent.js","../geom/Geometry.js":"node_modules/ol/geom/Geometry.js","../geom/GeometryType.js":"node_modules/ol/geom/GeometryType.js","../obj.js":"node_modules/ol/obj.js"}],"node_modules/ol/format/GeoJSON.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _asserts = require('../asserts.js');
+
+var _Feature = require('../Feature.js');
+
+var _Feature2 = _interopRequireDefault(_Feature);
+
+var _Feature3 = require('../format/Feature.js');
+
+var _JSONFeature = require('../format/JSONFeature.js');
+
+var _JSONFeature2 = _interopRequireDefault(_JSONFeature);
+
+var _GeometryCollection = require('../geom/GeometryCollection.js');
+
+var _GeometryCollection2 = _interopRequireDefault(_GeometryCollection);
+
+var _LineString = require('../geom/LineString.js');
+
+var _LineString2 = _interopRequireDefault(_LineString);
+
+var _MultiLineString = require('../geom/MultiLineString.js');
+
+var _MultiLineString2 = _interopRequireDefault(_MultiLineString);
+
+var _MultiPoint = require('../geom/MultiPoint.js');
+
+var _MultiPoint2 = _interopRequireDefault(_MultiPoint);
+
+var _MultiPolygon = require('../geom/MultiPolygon.js');
+
+var _MultiPolygon2 = _interopRequireDefault(_MultiPolygon);
+
+var _Point = require('../geom/Point.js');
+
+var _Point2 = _interopRequireDefault(_Point);
+
+var _Polygon = require('../geom/Polygon.js');
+
+var _Polygon2 = _interopRequireDefault(_Polygon);
+
+var _obj = require('../obj.js');
+
+var _proj = require('../proj.js');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @typedef {Object} Options
+ * @property {module:ol/proj~ProjectionLike} [dataProjection='EPSG:4326'] Default data projection.
+ * @property {module:ol/proj~ProjectionLike} [featureProjection] Projection for features read or
+ * written by the format.  Options passed to read or write methods will take precedence.
+ * @property {string} [geometryName] Geometry name to use when creating features.
+ * @property {boolean} [extractGeometryName=false] Certain GeoJSON providers include
+ * the geometry_name field in the feature GeoJSON. If set to `true` the GeoJSON reader
+ * will look for that field to set the geometry name. If both this field is set to `true`
+ * and a `geometryName` is provided, the `geometryName` will take precedence.
+ */
+
+/**
+ * @classdesc
+ * Feature format for reading and writing data in the GeoJSON format.
+ *
+  * @api
+ */
+var GeoJSON = function (JSONFeature) {
+  function GeoJSON(opt_options) {
+
+    var options = opt_options ? opt_options : {};
+
+    JSONFeature.call(this);
+
+    /**
+     * @inheritDoc
+     */
+    this.dataProjection = (0, _proj.get)(options.dataProjection ? options.dataProjection : 'EPSG:4326');
+
+    if (options.featureProjection) {
+      this.defaultFeatureProjection = (0, _proj.get)(options.featureProjection);
+    }
+
+    /**
+     * Name of the geometry attribute for features.
+     * @type {string|undefined}
+     * @private
+     */
+    this.geometryName_ = options.geometryName;
+
+    /**
+     * Look for the geometry name in the feature GeoJSON
+     * @type {boolean|undefined}
+     * @private
+     */
+    this.extractGeometryName_ = options.extractGeometryName;
+  }
+
+  if (JSONFeature) GeoJSON.__proto__ = JSONFeature;
+  GeoJSON.prototype = Object.create(JSONFeature && JSONFeature.prototype);
+  GeoJSON.prototype.constructor = GeoJSON;
+
+  /**
+   * @inheritDoc
+   */
+  GeoJSON.prototype.readFeatureFromObject = function readFeatureFromObject(object, opt_options) {
+    /**
+     * @type {GeoJSONFeature}
+     */
+    var geoJSONFeature = null;
+    if (object.type === 'Feature') {
+      geoJSONFeature = /** @type {GeoJSONFeature} */object;
+    } else {
+      geoJSONFeature = /** @type {GeoJSONFeature} */{
+        type: 'Feature',
+        geometry: /** @type {GeoJSONGeometry|GeoJSONGeometryCollection} */object
+      };
+    }
+
+    var geometry = readGeometry(geoJSONFeature.geometry, opt_options);
+    var feature = new _Feature2.default();
+    if (this.geometryName_) {
+      feature.setGeometryName(this.geometryName_);
+    } else if (this.extractGeometryName_ && geoJSONFeature.geometry_name !== undefined) {
+      feature.setGeometryName(geoJSONFeature.geometry_name);
+    }
+    feature.setGeometry(geometry);
+    if (geoJSONFeature.id !== undefined) {
+      feature.setId(geoJSONFeature.id);
+    }
+    if (geoJSONFeature.properties) {
+      feature.setProperties(geoJSONFeature.properties);
+    }
+    return feature;
+  };
+
+  /**
+   * @inheritDoc
+   */
+  GeoJSON.prototype.readFeaturesFromObject = function readFeaturesFromObject(object, opt_options) {
+    var this$1 = this;
+
+    var geoJSONObject = /** @type {GeoJSONObject} */object;
+    /** @type {Array<module:ol/Feature>} */
+    var features = null;
+    if (geoJSONObject.type === 'FeatureCollection') {
+      var geoJSONFeatureCollection = /** @type {GeoJSONFeatureCollection} */object;
+      features = [];
+      var geoJSONFeatures = geoJSONFeatureCollection.features;
+      for (var i = 0, ii = geoJSONFeatures.length; i < ii; ++i) {
+        features.push(this$1.readFeatureFromObject(geoJSONFeatures[i], opt_options));
+      }
+    } else {
+      features = [this.readFeatureFromObject(object, opt_options)];
+    }
+    return features;
+  };
+
+  /**
+   * @inheritDoc
+   */
+  GeoJSON.prototype.readGeometryFromObject = function readGeometryFromObject(object, opt_options) {
+    return readGeometry( /** @type {GeoJSONGeometry} */object, opt_options);
+  };
+
+  /**
+   * @inheritDoc
+   */
+  GeoJSON.prototype.readProjectionFromObject = function readProjectionFromObject(object) {
+    var geoJSONObject = /** @type {GeoJSONObject} */object;
+    var crs = geoJSONObject.crs;
+    var projection;
+    if (crs) {
+      if (crs.type == 'name') {
+        projection = (0, _proj.get)(crs.properties.name);
+      } else {
+        (0, _asserts.assert)(false, 36); // Unknown SRS type
+      }
+    } else {
+      projection = this.dataProjection;
+    }
+    return (
+      /** @type {module:ol/proj/Projection} */projection
+    );
+  };
+
+  /**
+   * Encode a feature as a GeoJSON Feature object.
+   *
+   * @param {module:ol/Feature} feature Feature.
+   * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+   * @return {GeoJSONFeature} Object.
+   * @override
+   * @api
+   */
+  GeoJSON.prototype.writeFeatureObject = function writeFeatureObject(feature, opt_options) {
+    opt_options = this.adaptOptions(opt_options);
+
+    var object = /** @type {GeoJSONFeature} */{
+      'type': 'Feature'
+    };
+    var id = feature.getId();
+    if (id !== undefined) {
+      object.id = id;
+    }
+    var geometry = feature.getGeometry();
+    if (geometry) {
+      object.geometry = writeGeometry(geometry, opt_options);
+    } else {
+      object.geometry = null;
+    }
+    var properties = feature.getProperties();
+    delete properties[feature.getGeometryName()];
+    if (!(0, _obj.isEmpty)(properties)) {
+      object.properties = properties;
+    } else {
+      object.properties = null;
+    }
+    return object;
+  };
+
+  /**
+   * Encode an array of features as a GeoJSON object.
+   *
+   * @param {Array<module:ol/Feature>} features Features.
+   * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+   * @return {GeoJSONFeatureCollection} GeoJSON Object.
+   * @override
+   * @api
+   */
+  GeoJSON.prototype.writeFeaturesObject = function writeFeaturesObject(features, opt_options) {
+    var this$1 = this;
+
+    opt_options = this.adaptOptions(opt_options);
+    var objects = [];
+    for (var i = 0, ii = features.length; i < ii; ++i) {
+      objects.push(this$1.writeFeatureObject(features[i], opt_options));
+    }
+    return (/** @type {GeoJSONFeatureCollection} */{
+        type: 'FeatureCollection',
+        features: objects
+      }
+    );
+  };
+
+  /**
+   * Encode a geometry as a GeoJSON object.
+   *
+   * @param {module:ol/geom/Geometry} geometry Geometry.
+   * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+   * @return {GeoJSONGeometry|GeoJSONGeometryCollection} Object.
+   * @override
+   * @api
+   */
+  GeoJSON.prototype.writeGeometryObject = function writeGeometryObject(geometry, opt_options) {
+    return writeGeometry(geometry, this.adaptOptions(opt_options));
+  };
+
+  return GeoJSON;
+}(_JSONFeature2.default);
+
+/**
+ * @const
+ * @type {Object<string, function(GeoJSONObject): module:ol/geom/Geometry>}
+ */
+/**
+ * @module ol/format/GeoJSON
+ */
+// TODO: serialize dataProjection as crs member when writing
+// see https://github.com/openlayers/openlayers/issues/2078
+
+var GEOMETRY_READERS = {
+  'Point': readPointGeometry,
+  'LineString': readLineStringGeometry,
+  'Polygon': readPolygonGeometry,
+  'MultiPoint': readMultiPointGeometry,
+  'MultiLineString': readMultiLineStringGeometry,
+  'MultiPolygon': readMultiPolygonGeometry,
+  'GeometryCollection': readGeometryCollectionGeometry
+};
+
+/**
+ * @const
+ * @type {Object<string, function(module:ol/geom/Geometry, module:ol/format/Feature~WriteOptions=): (GeoJSONGeometry|GeoJSONGeometryCollection)>}
+ */
+var GEOMETRY_WRITERS = {
+  'Point': writePointGeometry,
+  'LineString': writeLineStringGeometry,
+  'Polygon': writePolygonGeometry,
+  'MultiPoint': writeMultiPointGeometry,
+  'MultiLineString': writeMultiLineStringGeometry,
+  'MultiPolygon': writeMultiPolygonGeometry,
+  'GeometryCollection': writeGeometryCollectionGeometry,
+  'Circle': writeEmptyGeometryCollectionGeometry
+};
+
+/**
+ * @param {GeoJSONGeometry|GeoJSONGeometryCollection} object Object.
+ * @param {module:ol/format/Feature~ReadOptions=} opt_options Read options.
+ * @return {module:ol/geom/Geometry} Geometry.
+ */
+function readGeometry(object, opt_options) {
+  if (!object) {
+    return null;
+  }
+  var geometryReader = GEOMETRY_READERS[object.type];
+  return (
+    /** @type {module:ol/geom/Geometry} */(0, _Feature3.transformWithOptions)(geometryReader(object), false, opt_options)
+  );
+}
+
+/**
+ * @param {GeoJSONGeometryCollection} object Object.
+ * @param {module:ol/format/Feature~ReadOptions=} opt_options Read options.
+ * @return {module:ol/geom/GeometryCollection} Geometry collection.
+ */
+function readGeometryCollectionGeometry(object, opt_options) {
+  var geometries = object.geometries.map(
+  /**
+   * @param {GeoJSONGeometry} geometry Geometry.
+   * @return {module:ol/geom/Geometry} geometry Geometry.
+   */
+  function (geometry) {
+    return readGeometry(geometry, opt_options);
+  });
+  return new _GeometryCollection2.default(geometries);
+}
+
+/**
+ * @param {GeoJSONGeometry} object Object.
+ * @return {module:ol/geom/Point} Point.
+ */
+function readPointGeometry(object) {
+  return new _Point2.default(object.coordinates);
+}
+
+/**
+ * @param {GeoJSONGeometry} object Object.
+ * @return {module:ol/geom/LineString} LineString.
+ */
+function readLineStringGeometry(object) {
+  return new _LineString2.default(object.coordinates);
+}
+
+/**
+ * @param {GeoJSONGeometry} object Object.
+ * @return {module:ol/geom/MultiLineString} MultiLineString.
+ */
+function readMultiLineStringGeometry(object) {
+  return new _MultiLineString2.default(object.coordinates);
+}
+
+/**
+ * @param {GeoJSONGeometry} object Object.
+ * @return {module:ol/geom/MultiPoint} MultiPoint.
+ */
+function readMultiPointGeometry(object) {
+  return new _MultiPoint2.default(object.coordinates);
+}
+
+/**
+ * @param {GeoJSONGeometry} object Object.
+ * @return {module:ol/geom/MultiPolygon} MultiPolygon.
+ */
+function readMultiPolygonGeometry(object) {
+  return new _MultiPolygon2.default(object.coordinates);
+}
+
+/**
+ * @param {GeoJSONGeometry} object Object.
+ * @return {module:ol/geom/Polygon} Polygon.
+ */
+function readPolygonGeometry(object) {
+  return new _Polygon2.default(object.coordinates);
+}
+
+/**
+ * @param {module:ol/geom/Geometry} geometry Geometry.
+ * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+ * @return {GeoJSONGeometry|GeoJSONGeometryCollection} GeoJSON geometry.
+ */
+function writeGeometry(geometry, opt_options) {
+  var geometryWriter = GEOMETRY_WRITERS[geometry.getType()];
+  return geometryWriter( /** @type {module:ol/geom/Geometry} */(0, _Feature3.transformWithOptions)(geometry, true, opt_options), opt_options);
+}
+
+/**
+ * @param {module:ol/geom/Geometry} geometry Geometry.
+ * @return {GeoJSONGeometryCollection} Empty GeoJSON geometry collection.
+ */
+function writeEmptyGeometryCollectionGeometry(geometry) {
+  return (/** @type {GeoJSONGeometryCollection} */{
+      type: 'GeometryCollection',
+      geometries: []
+    }
+  );
+}
+
+/**
+ * @param {module:ol/geom/GeometryCollection} geometry Geometry.
+ * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+ * @return {GeoJSONGeometryCollection} GeoJSON geometry collection.
+ */
+function writeGeometryCollectionGeometry(geometry, opt_options) {
+  var geometries = geometry.getGeometriesArray().map(function (geometry) {
+    var options = (0, _obj.assign)({}, opt_options);
+    delete options.featureProjection;
+    return writeGeometry(geometry, options);
+  });
+  return (/** @type {GeoJSONGeometryCollection} */{
+      type: 'GeometryCollection',
+      geometries: geometries
+    }
+  );
+}
+
+/**
+ * @param {module:ol/geom/LineString} geometry Geometry.
+ * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+ * @return {GeoJSONGeometry} GeoJSON geometry.
+ */
+function writeLineStringGeometry(geometry, opt_options) {
+  return (/** @type {GeoJSONGeometry} */{
+      type: 'LineString',
+      coordinates: geometry.getCoordinates()
+    }
+  );
+}
+
+/**
+ * @param {module:ol/geom/MultiLineString} geometry Geometry.
+ * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+ * @return {GeoJSONGeometry} GeoJSON geometry.
+ */
+function writeMultiLineStringGeometry(geometry, opt_options) {
+  return (/** @type {GeoJSONGeometry} */{
+      type: 'MultiLineString',
+      coordinates: geometry.getCoordinates()
+    }
+  );
+}
+
+/**
+ * @param {module:ol/geom/MultiPoint} geometry Geometry.
+ * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+ * @return {GeoJSONGeometry} GeoJSON geometry.
+ */
+function writeMultiPointGeometry(geometry, opt_options) {
+  return (/** @type {GeoJSONGeometry} */{
+      type: 'MultiPoint',
+      coordinates: geometry.getCoordinates()
+    }
+  );
+}
+
+/**
+ * @param {module:ol/geom/MultiPolygon} geometry Geometry.
+ * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+ * @return {GeoJSONGeometry} GeoJSON geometry.
+ */
+function writeMultiPolygonGeometry(geometry, opt_options) {
+  var right;
+  if (opt_options) {
+    right = opt_options.rightHanded;
+  }
+  return (/** @type {GeoJSONGeometry} */{
+      type: 'MultiPolygon',
+      coordinates: geometry.getCoordinates(right)
+    }
+  );
+}
+
+/**
+ * @param {module:ol/geom/Point} geometry Geometry.
+ * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+ * @return {GeoJSONGeometry} GeoJSON geometry.
+ */
+function writePointGeometry(geometry, opt_options) {
+  return (/** @type {GeoJSONGeometry} */{
+      type: 'Point',
+      coordinates: geometry.getCoordinates()
+    }
+  );
+}
+
+/**
+ * @param {module:ol/geom/Polygon} geometry Geometry.
+ * @param {module:ol/format/Feature~WriteOptions=} opt_options Write options.
+ * @return {GeoJSONGeometry} GeoJSON geometry.
+ */
+function writePolygonGeometry(geometry, opt_options) {
+  var right;
+  if (opt_options) {
+    right = opt_options.rightHanded;
+  }
+  return (/** @type {GeoJSONGeometry} */{
+      type: 'Polygon',
+      coordinates: geometry.getCoordinates(right)
+    }
+  );
+}
+
+exports.default = GeoJSON;
+
+//# sourceMappingURL=GeoJSON.js.map
+},{"../asserts.js":"node_modules/ol/asserts.js","../Feature.js":"node_modules/ol/Feature.js","../format/Feature.js":"node_modules/ol/format/Feature.js","../format/JSONFeature.js":"node_modules/ol/format/JSONFeature.js","../geom/GeometryCollection.js":"node_modules/ol/geom/GeometryCollection.js","../geom/LineString.js":"node_modules/ol/geom/LineString.js","../geom/MultiLineString.js":"node_modules/ol/geom/MultiLineString.js","../geom/MultiPoint.js":"node_modules/ol/geom/MultiPoint.js","../geom/MultiPolygon.js":"node_modules/ol/geom/MultiPolygon.js","../geom/Point.js":"node_modules/ol/geom/Point.js","../geom/Polygon.js":"node_modules/ol/geom/Polygon.js","../obj.js":"node_modules/ol/obj.js","../proj.js":"node_modules/ol/proj.js"}],"index.js":[function(require,module,exports) {
 'use strict';
 
 require('./src/lib/ol/ol.css');
@@ -65130,16 +66496,34 @@ var _source = require('ol/source.js');
 
 var _style = require('ol/style.js');
 
+var _condition = require('ol/events/condition.js');
+
+var _Select = require('ol/interaction/Select.js');
+
+var _Select2 = _interopRequireDefault(_Select);
+
+var _Feature = require('ol/Feature.js');
+
+var _Feature2 = _interopRequireDefault(_Feature);
+
+var _geom = require('ol/geom.js');
+
+var _GeoJSON = require('ol/format/GeoJSON.js');
+
+var _GeoJSON2 = _interopRequireDefault(_GeoJSON);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Map views always need a projection.  Here we just want to map image
 // coordinates directly to map coordinates, so we create a projection that uses
 // the image extent in pixels.
 
+//读取图形数据
+
+var extent = [0, 0, 3158, 1688];
 // import TileLayer from 'ol/layer/Tile';
 // import OSM from 'ol/source/OSM';
 
-var extent = [0, 0, 3158, 1688];
 var projection = new _Projection2.default({
   code: 'xkcd-image',
   units: 'pixels',
@@ -65169,9 +66553,16 @@ var vector = new _layer.Vector({
     })
   })
 });
+// console.log(store.get("Point"))
+// var pointFeature = new Feature(new Point(store.get("Point")));
+// var polygonFeature = new Feature(new Polygon(store.get("Polygon")));
+
+var localVector = "";
+var pointFeature = new _Feature2.default(new _geom.Point([500, 550]));
 
 var map = new _ol.Map({
   target: 'map',
+  //interactions: defaultInteractions().extend([select]),
   layers: [
   //raster, vector
   new _Image2.default({
@@ -65179,6 +66570,32 @@ var map = new _ol.Map({
       url: './img/floor1@2x.png',
       projection: projection,
       imageExtent: extent
+    })
+  }), new _layer.Vector({
+    // source: new VectorSource({
+    //   features: [pointFeature]
+    // }),
+    source: new _source.Vector({
+      url: "geoJson.json",
+      format: new _GeoJSON2.default(),
+      wrapX: false
+    }),
+    style: new _style.Style({
+      image: new _style.Icon( /** @type {module:ol/style/Icon~Options} */{
+        anchor: [0.5, 100],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'pixels',
+        opacity: 0.75,
+        scale: 0.3,
+        src: './img/camera@2x.png'
+      }),
+      stroke: new _style.Stroke({
+        width: 1,
+        color: [255, 0, 0, 1]
+      }),
+      fill: new _style.Fill({
+        color: [0, 0, 255, 0.3]
+      })
     })
   }), vector],
 
@@ -65190,11 +66607,24 @@ var map = new _ol.Map({
   })
 });
 
+//给区域添加点击事件
+var select = null; // ref to currently selected interaction
+
+// select interaction working on "click"
+var selectClick = new _Select2.default();
+
+map.addInteraction(selectClick);
+
+var groupList = [{ id: 1, cameras: [1, 2] }, { id: 2, cameras: [4, 7, 9] }];
+
+selectClick.on('select', function (e) {
+  console.log(e.selected[0]);
+});
+
 var modify = new _interaction.Modify({ source: source });
 map.addInteraction(modify);
 
 var draw, snap; // global so we can remove them later
-var typeSelect = document.getElementById('type');
 
 $("#type i").click(function () {
   removeAction();
@@ -65206,26 +66636,19 @@ $("#type i").click(function () {
 function addInteractions(typeVal) {
   draw = new _interaction.Draw({
     source: source,
-    type: typeVal
+    type: typeVal,
+    geometryName: "group1"
   });
+  map.addInteraction(draw);
 
-  // draw.finishDrawing = function(e){
-  //   console.log("finishDrawing:结束:",e);
-  //   return true;
-  // }
+  snap = new _interaction.Snap({ source: source });
+  map.addInteraction(snap);
 
   draw.on('drawend', function (e) {
     console.log("完成后", e);
     removeAction();
+    saveDraw(e.target.mode_, e.target.sketchCoords_);
   });
-
-  map.addInteraction(draw);
-  snap = new _interaction.Snap({ source: source });
-
-  map.addInteraction(snap);
-
-  console.log(draw.getOverlay(), snap);
-  console.log(map);
 }
 
 function removeAction() {
@@ -65234,16 +66657,15 @@ function removeAction() {
   $("#type i").removeClass("selected");
 }
 
-/**
- * Handle change event.
- */
-// typeSelect.onchange = function() {
-
-//   addInteractions();
-// };
-
-//addInteractions();
-},{"./src/lib/ol/ol.css":"src/lib/ol/ol.css","ol":"node_modules/ol/index.js","ol/extent.js":"node_modules/ol/extent.js","ol/layer/Image.js":"node_modules/ol/layer/Image.js","ol/proj/Projection.js":"node_modules/ol/proj/Projection.js","ol/source/ImageStatic.js":"node_modules/ol/source/ImageStatic.js","ol/interaction.js":"node_modules/ol/interaction.js","ol/layer.js":"node_modules/ol/layer.js","ol/source.js":"node_modules/ol/source.js","ol/style.js":"node_modules/ol/style.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+function saveDraw(Dtype, Arr) {
+  store.set(Dtype, Arr);
+  // localforage.setItem(Dtype, Arr).then(function(value) {
+  //   console.log(value[0]);// This will output `1`.
+  // }).catch(function(err) {
+  //   console.log(err);// This code runs if there were any errors
+  // });
+}
+},{"./src/lib/ol/ol.css":"src/lib/ol/ol.css","ol":"node_modules/ol/index.js","ol/extent.js":"node_modules/ol/extent.js","ol/layer/Image.js":"node_modules/ol/layer/Image.js","ol/proj/Projection.js":"node_modules/ol/proj/Projection.js","ol/source/ImageStatic.js":"node_modules/ol/source/ImageStatic.js","ol/interaction.js":"node_modules/ol/interaction.js","ol/layer.js":"node_modules/ol/layer.js","ol/source.js":"node_modules/ol/source.js","ol/style.js":"node_modules/ol/style.js","ol/events/condition.js":"node_modules/ol/events/condition.js","ol/interaction/Select.js":"node_modules/ol/interaction/Select.js","ol/Feature.js":"node_modules/ol/Feature.js","ol/geom.js":"node_modules/ol/geom.js","ol/format/GeoJSON.js":"node_modules/ol/format/GeoJSON.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 
@@ -65272,7 +66694,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '59819' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '56480' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
