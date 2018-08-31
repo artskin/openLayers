@@ -27,7 +27,7 @@ import GeoJSON from 'ol/format/GeoJSON.js';
 
 //读取图形数据
 
-var extent = [0, 0, 3158, 1688];
+var extent = [0, 0, 1400, 1288];
 var projection = new Projection({
   code: 'xkcd-image',
   units: 'pixels',
@@ -71,7 +71,7 @@ var map = new Map({
     //raster, vector
     new ImageLayer({
       source: new Static({
-        url: './img/floor1@2x.png',
+        url: './img/floor_map2.jpg',
         projection: projection,
         imageExtent: extent
       })
